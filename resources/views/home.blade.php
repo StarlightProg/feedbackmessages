@@ -2,14 +2,10 @@
 
 @section('content')
 
-{{-- @php( $messages = App\Models\Message::all() )  
-@php( $owners = \App\User::all()) --}}
-
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -20,41 +16,95 @@
 
                     @if (Auth::check())
                         @if (!Auth::user()->is_moderator)
-                            <form style="display: grid; grid-template-columns:1fr; row-gap: 10px;  width:50%;" method="POST" enctype="multipart/form-data" action="{{ route('storeMessage') }}">
+                            <form style="display: grid; grid-template-columns:1fr; row-gap: 10px;  width:50%;" method="POST" enctype="multipart/form-data" action="{{ route('store.message') }}">
                                 @csrf
                                 <input type="text" name="theme" placeholder="Тема сообщения" required>
                                 <textarea style="margin-top: 5px" rows="5" cols="15" name="message" placeholder="Текст сообщения" required></textarea>
                                 <input type="file" name="file" required>                              
                                 <input type="submit"> 
                             </form>
-                            @error('file')
-                                <p>Ошибка</p>
-                            @enderror
+                            @if($errors->any())
+                                {!! implode('', $errors->all('<div>:message</div>')) !!}
+                            @endif
                         @else
                             <div style="display: grid; row-gap 10px width:100%">
-                                @foreach (App\Models\Message::all() as $message)
-                                @php($user = App\Models\User::where('id',$message->user_id)->get()[0])
-                                    <div>
-                                        <p>Тема сообщения: {{$message->theme}}</p>
-                                        <p>Текст сообщения: {{$message->message}}</p>
-                                        <p>Прикреплённый файл: {{$message->file}}</p>
-                                        <p>Время отправки: {{$message->created_at}}</p>
-                                        <div style="display: grid; grid-template-columns:1fr 1fr 1fr; column-gap: 5px;">
-                                            <p>ID: {{$user->id}}</p>
-                                            <p>Имя: {{$user->name}}</p>
-                                            <p>Email: {{$user->email}}</p>
-                                        </div>
-                                        <p>Время создания: {{$user->created_at}}</p>
-                                        <hr>
-                                    </div>
-                                @endforeach
+                                <div style="display: flex; flex-direction: row; align-items:center;">
+                                    <p>Кол-во записей:  </p>
+                                    <select id="selectPaginate" style="width:15%; margin-bottom:10px; margin-left:5px;">
+                                        <option selected value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                    </select>        
+                              </div>
+                                <button id="sortData" style="width:25%">Отсортировать по времени</button>
+                                <hr>
+                                <div id="pagination_data">
+                                    @include('pagination')
+                                </div>
                             </div>
                         @endif
                     @endif
-                    {{ __('You are logged in!') }}
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+ 
+    $(document).ready(function() {
+        let desc = true;
+
+        $(document).on('click', '.page-item a', function(event) {
+            event.preventDefault();
+            var page = $(this).attr('href').split('page=')[1];
+            fetch_data(page);
+        });
+
+        $(document).on('click', '#sortData', function(event) {
+            sort_data(desc);
+            desc = !desc;
+        });
+
+        $("#selectPaginate").change(function(event) {
+            $.ajax({
+                url: "/home/paginationAmount",
+                data: {
+                    amount: $( "#selectPaginate option:selected" ).text()
+                },
+                success: function(messages) {
+                    $('#pagination_data').html(messages);
+                }
+            });     
+        });
+
+        function fetch_data(page) {
+            $.ajax({
+                url: "/home/pagination" + "?page=" + page,
+                data: {
+                    amount: $( "#selectPaginate option:selected" ).text()
+                },
+                success: function(messages) {
+                    $('#pagination_data').html(messages);
+                }
+            });
+        }
+
+        function sort_data(descc) {
+            $.ajax({
+                url: "/home/paginationSort",
+                data: {
+                    amount: $( "#selectPaginate option:selected" ).text(),
+                    desc: descc
+                },
+                success: function(messages) {
+                    console.log(messages)
+                    $('#pagination_data').html(messages);
+                }
+            });
+        }
+
+    });
+</script>

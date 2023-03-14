@@ -40,14 +40,14 @@ class SendMessageMail extends Mailable
      */
     public function content(): Content
     {
-        //dd($this->mailData['theme']);
         return new Content(
             view: 'emails.message',
             with: [
                 //'maildata' => $this->mailData,
                 'theme' => $this->mailData['theme'],
                 'message' => $this->mailData['message'],
-                'file' => $this->mailData['file']
+                'file' => $this->mailData['file'],
+                'user_id' => $this->mailData['user_id']
             ]
         );
     }

@@ -16,13 +16,13 @@ use App\Http\Controllers\StoreController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/home/get',GetMessagesController::class)->name('getMessages');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'home']);
 
-Route::post('/home/store',StoreController::class)->name('storeMessage');
+Route::get('/pagination', [App\Http\Controllers\HomeController::class, 'fetch_data']);
+Route::get('/paginationAmount', [App\Http\Controllers\HomeController::class, 'pagination_amount']);
+Route::get('/paginationSort', [App\Http\Controllers\HomeController::class, 'pagination_sort']);
+
+Route::post('/store',StoreController::class)->name('store.message');
