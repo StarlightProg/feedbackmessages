@@ -49,7 +49,7 @@ class StoreController extends Controller
         }
 
         //Отправка письма на почту
-        //Mail::to('')->queue(new SendMessageMail($data));
+        Mail::to('menedge57@gmail.com')->queue(new SendMessageMail($data));
 
         Message::firstOrCreate($data);
         return redirect()->route('home');

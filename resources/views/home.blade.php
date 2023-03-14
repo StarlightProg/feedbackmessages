@@ -70,7 +70,7 @@
 
         $("#selectPaginate").change(function(event) {
             $.ajax({
-                url: "/home/paginationAmount",
+                url: "/paginationAmount",
                 data: {
                     amount: $( "#selectPaginate option:selected" ).text()
                 },
@@ -82,7 +82,7 @@
 
         function fetch_data(page) {
             $.ajax({
-                url: "/home/pagination" + "?page=" + page,
+                url: "/pagination" + "?page=" + page,
                 data: {
                     amount: $( "#selectPaginate option:selected" ).text()
                 },
@@ -94,7 +94,7 @@
 
         function sort_data(descc) {
             $.ajax({
-                url: "/home/paginationSort",
+                url: "/paginationSort",
                 data: {
                     amount: $( "#selectPaginate option:selected" ).text(),
                     desc: descc

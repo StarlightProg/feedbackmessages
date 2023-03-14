@@ -30,7 +30,7 @@ class SendMessageMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address(Auth::user()->email, 'User'),
+            from: new Address('test0site@rambler.ru', 'Egor Novikov'),
             subject: 'Сообщение из формы',
         );
     }
