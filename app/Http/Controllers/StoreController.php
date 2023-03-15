@@ -42,14 +42,14 @@ class StoreController extends Controller
 
         $data = $request->validated();
         $data['user_id'] = Auth::user()->id;
-        if($request->file('file')){
-            $name = md5(uniqid()).'.'.$request->file('file')->getClientOriginalExtension();           
-            Storage::putFileAs('/public',$request->file('file'),$name);
-            $data['file'] = Storage::url($name);
-        }
+        
+        $name = md5(uniqid()).'.'.$request->file('file')->getClientOriginalExtension();           
+        Storage::putFileAs('/public',$request->file('file'),$name);
+        $data['file'] = Storage::url($name);
+        
 
         //Отправка письма на почту
-        Mail::to('menedge57@gmail.com')->queue(new SendMessageMail($data));
+        //Mail::to('test0site@rambler.ru')->queue(new SendMessageMail($data,$name));
 
         Message::firstOrCreate($data);
         return redirect()->route('home');
