@@ -20,11 +20,11 @@ class MessageFactory extends Factory
     public function definition(): array
     {
         $fakeFileName = Str::random(15);
-        Storage::putFileAs('messages',UploadedFile::fake()->image(fake()->name()),$fakeFileName);
+        Storage::putFileAs('/public',UploadedFile::fake()->image(fake()->name()),$fakeFileName);
         return [
             'theme' => fake()->name(),
             'message' => fake()->realText(50),
-            'file' => Storage::url($fakeFileName),
+            'file' => $fakeFileName,
             'user_id' => random_int(2,11)
         ];
     }

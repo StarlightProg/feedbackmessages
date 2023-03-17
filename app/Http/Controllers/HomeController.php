@@ -6,6 +6,7 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -103,5 +104,11 @@ class HomeController extends Controller
 
     public function home(){
         return redirect()->route('home');
+    }
+
+    public function download_file(){
+        if(isset($_GET['file'])){
+            return Storage::download("public/".$_GET['file']);
+        }
     }
 }

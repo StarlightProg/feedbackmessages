@@ -2,7 +2,7 @@
     <div>
         <p>Тема сообщения: {{$message->theme}}</p>
         <p>Текст сообщения: {{$message->message}}</p>
-        <p>Прикреплённый файл: {{$message->file}}</p>
+        <p>Прикреплённый файл: <a href="/downloadFile?file={{$message->file}}" id="a_downloadfile" >{{$message->file}}</a></p>
         <p>Время отправки: {{$message->created_at}}</p>
         <div style="display: grid; grid-template-columns:1fr 1fr 1fr; column-gap: 5px;">
             <p>ID: {{$message->user_id}}</p>

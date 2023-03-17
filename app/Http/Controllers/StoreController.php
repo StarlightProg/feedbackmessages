@@ -26,32 +26,31 @@ class StoreController extends Controller
         $validator = Validator::make($request->all(), $rules);
         $extension = $request->file('file')->getClientOriginalExtension();
 
-        $userMessages = Message::where('user_id',Auth::user()->id)->get();
-
-        if(!$userMessages->isEmpty()){
-            if($userMessages->last()->created_at->diffInDays(now()) == 0){
-                return redirect()->route('home')->withErrors(["Только одна заявка в день!"]);
-            }
-        }
-
         if ($extension == 'bat' || $extension == 'jar' || $extension == 'exe')
         {
             $messages = $validator->messages();
-            return redirect()->route('home')->withErrors(["Нельзя использовать расширение {$extension}"]);
+            return redirect()->route('home')->with('data',[$request->theme,$request->message])->withErrors(["Нельзя использовать расширение {$extension}"]);
         }
+
+        $userMessages = Message::where('user_id',Auth::user()->id)->get();
+
+        // if(!$userMessages->isEmpty()){
+        //     if($userMessages->last()->created_at->diffInDays(now()) == 0){
+        //         return redirect()->route('home')->with(['data'=>[$request->theme,$request->message]])->withErrors(["Только одна заявка в день!"]);
+        //     }
+        // }
 
         $data = $request->validated();
         $data['user_id'] = Auth::user()->id;
         
         $name = md5(uniqid()).'.'.$request->file('file')->getClientOriginalExtension();           
         Storage::putFileAs('/public',$request->file('file'),$name);
-        $data['file'] = Storage::url($name);
-        
+        $data['file'] = $name;
 
         //Отправка письма на почту
         //Mail::to('test0site@rambler.ru')->queue(new SendMessageMail($data,$name));
 
         Message::firstOrCreate($data);
-        return redirect()->route('home');
+        return redirect()->route('home')->with(['success' => 'success']);
     }
 }
