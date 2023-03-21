@@ -1,15 +1,17 @@
 $(document).ready(function() {
     
     let desc = true;
+    let page = 1;
+    let amount = 10;
 
     $(document).on('click', '.page-item a', function(event) {
         event.preventDefault();
-        var page = $(this).attr('href').split('page=')[1];
+        page = $(this).attr('href').split('page=')[1];
         fetch_data(page);
     });
 
     $(document).on('click', '#sortData', function(event) {
-        sort_data(desc);
+        sort_data(desc,page);
         desc = !desc;
     });
 
@@ -18,16 +20,23 @@ $(document).ready(function() {
     });
 
     $("#selectPaginate").change(function(event) {
+        page = change_amount(amount, $( "#selectPaginate option:selected" ).text(), page);  
+        amount = Number($( "#selectPaginate option:selected" ).text());      
+    });
+
+    function change_amount(previous_amount, current_amount, page){
+        page = Math.ceil( ( (page-1) * previous_amount) / Number(current_amount) );
         $.ajax({
-            url: "/paginationAmount",
+            url: "/paginationAmount" + "?page=" + page,
             data: {
-                amount: $( "#selectPaginate option:selected" ).text()
+                amount: current_amount
             },
             success: function(messages) {
                 $('#pagination_data').html(messages);
             }
-        });     
-    });
+        });
+        return page; 
+    }
 
     function fetch_data(page) {
         $.ajax({
@@ -41,9 +50,9 @@ $(document).ready(function() {
         });
     }
 
-    function sort_data(descc) {
+    function sort_data(descc,page) {
         $.ajax({
-            url: "/paginationSort",
+            url: "/paginationSort" + "?page=" + page,
             data: {
                 amount: $( "#selectPaginate option:selected" ).text(),
                 desc: descc

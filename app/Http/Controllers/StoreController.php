@@ -34,11 +34,11 @@ class StoreController extends Controller
 
         $userMessages = Message::where('user_id',Auth::user()->id)->get();
 
-        // if(!$userMessages->isEmpty()){
-        //     if($userMessages->last()->created_at->diffInDays(now()) == 0){
-        //         return redirect()->route('home')->with(['data'=>[$request->theme,$request->message]])->withErrors(["Только одна заявка в день!"]);
-        //     }
-        // }
+        if(!$userMessages->isEmpty()){
+            if($userMessages->last()->created_at->diffInDays(now()) == 0){
+                return redirect()->route('home')->with(['data'=>[$request->theme,$request->message]])->withErrors(["Только одна заявка в день!"]);
+            }
+        }
 
         $data = $request->validated();
         $data['user_id'] = Auth::user()->id;

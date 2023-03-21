@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
+    public static $paginate_sort_desc = 'false';
+
     /**
      * Create a new controller instance.
      *
@@ -48,8 +51,8 @@ class HomeController extends Controller
     public function fetch_data(Request $request)
     {
         if ($request->ajax()) 
-        {
-            $messages = Message::paginate($request->amount);
+        {         
+            $messages = $this->get_messages($request);
 
             foreach ($messages as $message) {
                 $user = User::where('id',$message->user_id)->get()[0];
@@ -66,7 +69,9 @@ class HomeController extends Controller
     public function pagination_amount(Request $request){
         if ($request->ajax()) 
         {
-            $messages = Message::paginate($request->amount);
+            session('paginateAmount', $request->amount);
+
+            $messages = $this->get_messages($request);
 
             foreach ($messages as $message) {
                 $user = User::where('id',$message->user_id)->get()[0];
@@ -83,12 +88,9 @@ class HomeController extends Controller
     public function pagination_sort(Request $request){
         if ($request->ajax()) 
         {
-            if($request->desc == 'true'){
-                $messages = Message::orderBy('created_at','DESC')->paginate($request->amount);
-            }
-            else{
-                $messages = Message::paginate($request->amount);
-            }
+            session(['paginate_sort_desc' => $request->desc]);
+            
+            $messages = $this->get_messages($request);
               
             foreach ($messages as $message) {
                 $user = User::where('id',$message->user_id)->get()[0];
@@ -97,7 +99,6 @@ class HomeController extends Controller
                 $message->user_email = $user->email;
                 $message->user_created_at = $user->created_at;
             }
-
             return view('pagination', compact('messages'))->render();
         }
     }
@@ -110,5 +111,15 @@ class HomeController extends Controller
         if(isset($_GET['file'])){
             return Storage::download("public/".$_GET['file']);
         }
+    }
+
+    private function get_messages(Request $request){
+        if(session('paginate_sort_desc') == 'true'){
+            $messages = Message::orderBy('created_at','DESC')->paginate($request->amount);
+        }
+        else{
+            $messages = Message::paginate($request->amount);
+        }
+        return $messages;
     }
 }
