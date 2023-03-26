@@ -40,8 +40,8 @@ class HomeController extends Controller
             $message->user_email = $user->email;
             $message->user_created_at = $user->created_at;
         }
-        
-        if(Auth::user()->is_moderator){
+        // @ts-ignore
+        if(Auth::user()->can('read posts')){
             return view('home')->with('messages',$messages);
         }
         

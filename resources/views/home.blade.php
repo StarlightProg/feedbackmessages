@@ -13,10 +13,24 @@
                             {{ session('status') }}
                         </div>
                     @endif
-                    
-                    @if (Auth::check())
-                        @if (!Auth::user()->is_moderator)
-                            
+                    @if (Auth::check())                                                        
+                        @can('read posts')
+                            <div style="display: grid; row-gap 10px width:100%">
+                                <div style="display: flex; flex-direction: row; align-items:center;">
+                                    <p>Кол-во записей:  </p>
+                                    <select id="selectPaginate" style="width:15%; margin-bottom:10px; margin-left:5px;">
+                                        <option selected value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                    </select>        
+                              </div>
+                                <button id="sortData" style="width:25%">Отсортировать по времени</button>
+                                <hr>
+                                <div id="pagination_data">
+                                    @include('pagination')
+                                </div>
+                            </div>
+                        @else
                             <form style="display: grid; grid-template-columns:1fr; row-gap: 10px;  width:50%;" method="POST" enctype="multipart/form-data" action="{{ route('store.message') }}">
                                 @csrf
                                 @isset(session()->get('data')[0])
@@ -38,26 +52,7 @@
                             @if($errors->any())
                                 {!! implode('', $errors->all('<div>:message</div>')) !!}
                             @endif
-                        @else
-                            <div style="display: grid; row-gap 10px width:100%">
-                                <div style="display: flex; flex-direction: row; align-items:center;">
-                                    <p>Кол-во записей:  </p>
-                                    <select id="selectPaginate" style="width:15%; margin-bottom:10px; margin-left:5px;">
-                                        <option selected value="10">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                    </select>        
-                              </div>
-                                <button id="sortData" style="width:25%">Отсортировать по времени</button>
-                                <hr>
-                                <div id="pagination_data">
-                                    @include('pagination')
-                                </div>
-                            </div>
-                        @endif
-
-                        
-                        
+                        @endcan                                            
                     @endif
                 </div>
             </div>
@@ -69,5 +64,8 @@
 @push('script')
     <script type="text/javascript" src="{{ asset('js/home.js') }}"></script>
 @endpush
+
+
+
 
 

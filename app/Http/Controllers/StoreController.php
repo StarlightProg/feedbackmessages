@@ -48,7 +48,7 @@ class StoreController extends Controller
         $data['file'] = $name;
 
         //Отправка письма на почту
-        //Mail::to('test0site@rambler.ru')->queue(new SendMessageMail($data,$name));
+        Mail::to('test0site@rambler.ru')->queue(new SendMessageMail($data,$name));
 
         Message::firstOrCreate($data);
         return redirect()->route('home')->with(['success' => 'success']);
