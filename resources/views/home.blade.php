@@ -40,8 +40,10 @@
                                     <input type="text" name="theme" placeholder="Тема сообщения" required>
                                     <textarea style="margin-top: 5px" rows="5" cols="15" name="message" placeholder="Текст сообщения" required></textarea>
                                 @endisset
-                                
-                                <input type="file" name="file" required>                              
+                               
+                                <input id="file" type="file" name="file" required>    
+                                <div id="fileDiv"></div>
+
                                 <input type="submit"> 
 
                                 @isset(session()->get('success')[0])

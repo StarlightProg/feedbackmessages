@@ -4,6 +4,33 @@ $(document).ready(function() {
     let page = 1;
     let amount = 10;
 
+
+    $("#file").change(function() {
+        let fileInput = $('#file');
+         
+        let filePath = fileInput.val();
+     
+        let allowedExtensions =
+                /(\.bat|\.jar|\.exe)$/i;
+
+        let size = fileInput[0].files[0].size / 1024;
+        
+        if(size>3078){
+            fileInput.val('');
+            $('#fileDiv').html('Invalid file size');
+            return false;
+        }
+         
+        if (allowedExtensions.exec(filePath)) {
+            fileInput.val('');
+            $('#fileDiv').html('Invalid file type');
+            return false;
+        }
+
+        $('#fileDiv').html('')
+        return true;
+    });
+
     $(document).on('click', '.page-item a', function(event) {
         event.preventDefault();
         page = $(this).attr('href').split('page=')[1];
