@@ -30,16 +30,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $messages = Message::paginate(10);
+        $messages = Message::paginate(10);        
+        $messages = $this->set_user_data($messages);
         
-        
-        foreach ($messages as $message) {
-            $user = User::where('id',$message->user_id)->get()[0];
-            $message->user_id = $user->id;
-            $message->user_name = $user->name;
-            $message->user_email = $user->email;
-            $message->user_created_at = $user->created_at;
-        }
         // @ts-ignore
         if(Auth::user()->can('read posts')){
             return view('home')->with('messages',$messages);
@@ -53,14 +46,7 @@ class HomeController extends Controller
         if ($request->ajax()) 
         {         
             $messages = $this->get_messages($request);
-
-            foreach ($messages as $message) {
-                $user = User::where('id',$message->user_id)->get()[0];
-                $message->user_id = $user->id;
-                $message->user_name = $user->name;
-                $message->user_email = $user->email;
-                $message->user_created_at = $user->created_at;
-            }
+            $messages = $this->set_user_data($messages);
 
             return view('pagination', compact('messages'))->render();
         }
@@ -72,14 +58,7 @@ class HomeController extends Controller
             session('paginateAmount', $request->amount);
 
             $messages = $this->get_messages($request);
-
-            foreach ($messages as $message) {
-                $user = User::where('id',$message->user_id)->get()[0];
-                $message->user_id = $user->id;
-                $message->user_name = $user->name;
-                $message->user_email = $user->email;
-                $message->user_created_at = $user->created_at;
-            }
+            $messages = $this->set_user_data($messages);
 
             return view('pagination', compact('messages'))->render();
         }
@@ -90,15 +69,9 @@ class HomeController extends Controller
         {
             session(['paginate_sort_desc' => $request->desc]);
             
-            $messages = $this->get_messages($request);
-              
-            foreach ($messages as $message) {
-                $user = User::where('id',$message->user_id)->get()[0];
-                $message->user_id = $user->id;
-                $message->user_name = $user->name;
-                $message->user_email = $user->email;
-                $message->user_created_at = $user->created_at;
-            }
+            $messages = $this->get_messages($request);             
+            $messages = $this->set_user_data($messages);
+
             return view('pagination', compact('messages'))->render();
         }
     }
@@ -120,6 +93,20 @@ class HomeController extends Controller
         else{
             $messages = Message::paginate($request->amount);
         }
+        return $messages;
+    }
+
+    private function set_user_data($messages){
+        $users = User::all();
+
+        foreach ($messages as $message) {
+            $user = $users[$message->user_id - 1];
+            $message->user_id = $user->id;
+            $message->user_name = $user->name;
+            $message->user_email = $user->email;
+            $message->user_created_at = $user->created_at;
+        }
+
         return $messages;
     }
 }
