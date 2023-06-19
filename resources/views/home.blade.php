@@ -19,9 +19,9 @@
                                 <div style="display: flex; flex-direction: row; align-items:center;">
                                     <p>Кол-во записей:  </p>
                                     <select id="selectPaginate" style="width:15%; margin-bottom:10px; margin-left:5px;">
-                                        <option selected value="10">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
+                                        <option value="10" {{ (session('paginateAmount') == '10') ? 'selected' : '' }}>10</option>
+                                        <option value="25" {{ (session('paginateAmount') == '25') ? 'selected' : '' }}>25</option>
+                                        <option value="50" {{ (session('paginateAmount') == '50') ? 'selected' : '' }}>50</option>
                                     </select>        
                               </div>
                                 <button id="sortData" style="width:25%">Отсортировать по времени</button>

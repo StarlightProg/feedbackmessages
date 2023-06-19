@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    
+
     let desc = true;
     let page = 1;
     let amount = 10;
@@ -7,20 +7,20 @@ $(document).ready(function() {
 
     $("#file").change(function() {
         let fileInput = $('#file');
-         
+
         let filePath = fileInput.val();
-     
+
         let allowedExtensions =
-                /(\.bat|\.jar|\.exe)$/i;
+            /(\.bat|\.jar|\.exe)$/i;
 
         let size = fileInput[0].files[0].size / 1024;
-        
-        if(size>3078){
+
+        if (size > 3078) {
             fileInput.val('');
             $('#fileDiv').html('Invalid file size');
             return false;
         }
-         
+
         if (allowedExtensions.exec(filePath)) {
             fileInput.val('');
             $('#fileDiv').html('Invalid file type');
@@ -38,7 +38,7 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '#sortData', function(event) {
-        sort_data(desc,page);
+        sort_data(desc, page);
         desc = !desc;
     });
 
@@ -47,12 +47,12 @@ $(document).ready(function() {
     });
 
     $("#selectPaginate").change(function(event) {
-        page = change_amount(amount, $( "#selectPaginate option:selected" ).text(), page);  
-        amount = Number($( "#selectPaginate option:selected" ).text());      
+        page = change_amount(amount, $("#selectPaginate option:selected").text(), page);
+        amount = Number($("#selectPaginate option:selected").text());
     });
 
-    function change_amount(previous_amount, current_amount, page){
-        page = Math.ceil( ( (page-1) * previous_amount) / Number(current_amount) );
+    function change_amount(previous_amount, current_amount, page) {
+        page = Math.ceil(((page - 1) * previous_amount) / Number(current_amount));
         $.ajax({
             url: "/paginationAmount" + "?page=" + page,
             data: {
@@ -62,14 +62,14 @@ $(document).ready(function() {
                 $('#pagination_data').html(messages);
             }
         });
-        return page; 
+        return page;
     }
 
     function fetch_data(page) {
         $.ajax({
             url: "/pagination" + "?page=" + page,
             data: {
-                amount: $( "#selectPaginate option:selected" ).text()
+                amount: $("#selectPaginate option:selected").text()
             },
             success: function(messages) {
                 $('#pagination_data').html(messages);
@@ -77,12 +77,12 @@ $(document).ready(function() {
         });
     }
 
-    function sort_data(descc,page) {
+    function sort_data(descc, page) {
         $.ajax({
             url: "/paginationSort" + "?page=" + page,
             data: {
-                amount: $( "#selectPaginate option:selected" ).text(),
-                desc: descc
+                amount: $("#selectPaginate option:selected").text(),
+                sort_by: true
             },
             success: function(messages) {
                 $('#pagination_data').html(messages);

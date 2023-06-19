@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\GetMessagesController;
+use App\Http\Controllers\DownloadController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PaginationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\StoreController;
@@ -18,12 +20,15 @@ use App\Http\Controllers\StoreController;
 
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'home']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'home']);
 
-Route::get('/pagination', [App\Http\Controllers\HomeController::class, 'fetch_data']);
-Route::get('/paginationAmount', [App\Http\Controllers\HomeController::class, 'pagination_amount']);
-Route::get('/paginationSort', [App\Http\Controllers\HomeController::class, 'pagination_sort']);
-Route::get('/downloadFile', [App\Http\Controllers\HomeController::class, 'download_file']);
+Route::controller(PaginationController::class)->group(function(){
+    Route::get('/pagination', [PaginationController::class, 'fetchData']);
+    Route::get('/paginationAmount', [PaginationController::class, 'paginationAmount']);
+    Route::get('/paginationSort', [PaginationController::class, 'paginationSort']);
+});
+
+Route::get('/downloadFile', [DownloadController::class, 'downloadFile']);
 
 Route::post('/store',[StoreController::class, 'store'])->name('store.message');
