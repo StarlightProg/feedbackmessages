@@ -26,4 +26,4 @@ Route::get('/paginationAmount', [App\Http\Controllers\HomeController::class, 'pa
 Route::get('/paginationSort', [App\Http\Controllers\HomeController::class, 'pagination_sort']);
 Route::get('/downloadFile', [App\Http\Controllers\HomeController::class, 'download_file']);
 
-Route::post('/store',StoreController::class)->name('store.message');
+Route::post('/store',[StoreController::class, 'store'])->name('store.message');
